@@ -1,10 +1,6 @@
-//
-// Created by adamv on 5/7/20.
-//
-
-#include "Benchmarks.h"
 #include <chrono>
 #include <experimental/random>
+#include "Benchmarks.h"
 
 using namespace std::chrono;
 using std::experimental::randint;
@@ -15,7 +11,7 @@ F rand_btree(Address left, Address right) {
         auto total = std::get<int>((*g)[seed]);
         if (total > 1) {
             int l = randint(1, total - 1), r = total - l;
-            auto[nl, nr] = g->wrap(l, r);
+            auto [nl, nr] = g->wrap(l, r);
             g->connect(seed, left, nl);
             g->connect(seed, right, nr);
             return CType("Mul");
@@ -36,7 +32,7 @@ F btree_avg(Address left, Address right) {
 
 void benchmarks::hylo_performance() {
     auto expr = new Layer();
-    auto[l, r, seed] = expr->wrap("Left", "Right", 100000);
+    auto[l, r, seed] = expr->wrap("Left", "Right", 10000);
 
     auto start = high_resolution_clock::now();
     auto res = expr->hylo(seed, rand_btree(l, r), btree_avg(l, r));

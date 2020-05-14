@@ -1,15 +1,8 @@
-//
-// Created by adamv on 5/6/20.
-//
-
 #ifndef HIERARCHY_LAYER_H
 #define HIERARCHY_LAYER_H
-#include <utility>
 #include <vector>
 #include <string>
 #include <tuple>
-#include <unordered_set>
-#include <set>
 #include <unordered_map>
 #include <iostream>
 #include <functional>
@@ -38,6 +31,7 @@ struct hash_pair {
         return static_cast<size_t>(x);
     }
     size_t operator()(const Address& value) const {
+        // return hash(value.first ^ value.second);  // what's best, when?
         return hash(value.first) ^ ((2u << 31u) - hash(value.second));
     }
 };
@@ -78,6 +72,7 @@ public:
 
     CType operator[](Address addr) const {
         auto [index, upstream] = addr;
+        if (level < upstream) throw std::out_of_range("Parent has no knowledge of child data.");
         unsigned int to_raise = level - upstream;
         auto layer = this;
         while (layer->parent and to_raise--) layer = layer->parent;
@@ -117,15 +112,26 @@ public:
        return objects;
     }
 
+    std::vector<Address> lift(std::vector<Address> addresses, Layer* lifted) {
+        /// For debugging purposes, only use in combination with <<=
+        for (auto& address : addresses){
+            address.first += lifted->data.size() - 1;
+            address.second = level;
+        }
+        return addresses;
+    }
+
     Layer* operator<<=(Layer* other) {
-        data.reserve(data.size() + other->data.size());
+        /// Addresses used in other are not valid in this, see `lift` above
+        unsigned int size = other->data.size();
+        data.reserve(data.size() + size);
         data.insert(data.end(), other->data.begin(), other->data.end());
         for (auto [s, po] : other->conn) {
             auto [p, o] = po;
             Address s_, p_, o_;
-            s_ = (s.second == other->level) ? Address(s.first, level) : s;
-            p_ = (p.second == other->level) ? Address(p.first, level) : p;
-            o_ = (o.second == other->level) ? Address(o.first, level) : o;
+            s_ = (s.second == other->level) ? Address(s.first + size - 1, level) : s;
+            p_ = (p.second == other->level) ? Address(p.first + size - 1, level) : p;
+            o_ = (o.second == other->level) ? Address(o.first + size - 1, level) : o;
             conn.insert({s_, std::make_pair(p_, o_)});
         }
         return this;

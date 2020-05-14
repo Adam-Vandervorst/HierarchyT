@@ -1,5 +1,4 @@
 #include <iostream>
-#include <thread>
 #include "Layer.h"
 #include "Benchmarks.h"
 
@@ -15,8 +14,8 @@ namespace test_graphs {
 
     auto layered() {
         auto l = new Layer();
-        auto l0 = l->add_layer("nested"); l->add_layer(); l->add_layer();
-        auto l00 = l0->add_layer("final");
+        auto l0 = l->add_layer("second layer"); l->add_layer(); l->add_layer();
+        auto l00 = l0->add_layer("final layer");
         return std::make_tuple(l, l0, l00);
     }
 
@@ -57,10 +56,6 @@ namespace test_graphs {
 
 
 int main() {
-    auto [U, scene, r1, r2] = test_graphs::scene_rewrite();
-    *scene <<= r1;
-    std::cout << "digraph G {" << std::endl;
-    r2->draw();
-    std::cout << "}" << std::endl;
+    benchmarks::hylo_performance();
     return 0;
 }
