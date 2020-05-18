@@ -1,4 +1,5 @@
 #include <experimental/random>
+#include "../src/Layer.h"
 #include "compute.h"
 
 using std::experimental::randint;

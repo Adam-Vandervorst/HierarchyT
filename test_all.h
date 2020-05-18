@@ -45,12 +45,26 @@ struct format {
 
 using namespace std::chrono;
 
-const std::map<std::string, std::map<std::string, std::function<void ()>>> all_tests = {
+const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::function<void ()>>>>> all_tests = {
         {"cross-implementation-benchmark", {
             {"hylo-tree-avg", hylo_performance}
-        }}
+        }},
+        {"node-basic", {
+            {"add-single-node", add_node},
+            {"add-nodes-wrap", add_nodes},
+            {"get-node-data", retrieve_node_data},
+            {"find-node-with-data", find_node_data},
+        }},
+        {"edge-basic", {
+            {"add-single-edge", add_node},
+            {"add-edges", add_nodes},
+            {"get-node-targets", retrieve_targets},
+        }},
 };
-const std::vector<long> expected_test_times = {6600000};
+
+const std::vector<long> expected_test_times = {6679310,
+                                               56, 126, 98, 236,
+                                               52, 120, 689};
 
 
 void test_all(unsigned int runs = 10) {

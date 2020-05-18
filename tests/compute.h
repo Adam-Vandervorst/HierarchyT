@@ -1,8 +1,6 @@
 #ifndef HIERARCHYT_COMPUTE_H
 #define HIERARCHYT_COMPUTE_H
 
-#include "../src/Layer.h"
-
 // Implementation
 //          nodes[K] time[ms] total[MiB] heap[MiB]
 // HierarchyT  1000      878        171       171

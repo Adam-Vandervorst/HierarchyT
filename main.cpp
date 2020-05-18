@@ -2,6 +2,6 @@
 #include "tests/test_graphs.h"
 
 int main() {
-    test_all(10);
+    test_all(100);
     return 0;
 }
