@@ -32,6 +32,10 @@ Open to pull-requests.
 
 - [ ] Add documentation and code comments in the frequent code paths
 - [ ] Implement a [NEAT](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)-like neural-network
+- [ ] Implement edge delete for stacked layers and merging
+- [ ] Implement node delete for stacked layers and merging
+- [ ] Add basic tests for Layer
+- [ ] Add basic tests for stacked layers
 - [ ] Construct more elaborate benchmarks including ones for graph-rewriting
 - [ ] Add a function-type to the allowed node storage types
 - [ ] Allow for more heterogeneous computation, using node-centric operations
