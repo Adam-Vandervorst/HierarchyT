@@ -1,4 +1,3 @@
-#include <cassert>
 #include <experimental/random>
 #include "compute.h"
 
@@ -37,7 +36,7 @@ void hylo_performance() {
     auto res_addr = expr->hylo(seed, rand_btree(l, r), btree_avg(l, r));
 
     double res = std::get<double>((*expr)[res_addr]);
-    assert(5.4 < res and res < 5.6);
     expr->free_tree();
     delete expr;
+    if (not (4 < res and res < 7)) throw std::logic_error("expression average should be 5.5");
 }

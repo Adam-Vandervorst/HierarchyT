@@ -12,17 +12,6 @@ Layer* Layer::add_layer(std::string new_name) {
     return new_layer;
 }
 
-template<typename DataType>
-Address Layer::add_node(DataType item) {
-    data.push_back(item);
-    return Address(data.size() - 1, level);
-}
-
-template<typename... Args>
-auto Layer::wrap(Args... rest) {
-    return std::make_tuple(add_node(rest)...);
-}
-
 CType Layer::operator[](Address addr) const {
     auto [index, upstream] = addr;
     if (level < upstream) throw std::out_of_range("Parent has no knowledge of child data.");

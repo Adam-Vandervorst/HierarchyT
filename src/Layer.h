@@ -1,6 +1,7 @@
 #ifndef HIERARCHY_LAYER_H
 #define HIERARCHY_LAYER_H
 #include <vector>
+#include <array>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -27,14 +28,14 @@ struct hash_pair {
         return static_cast<size_t>(x);
     }
     size_t operator()(const Address& value) const {
-        // return value.first ^ value.second;  // what's best, when?
+        // return str.first ^ str.second;  // what's best, when?
         return hash(value.first) ^ ((2u << 31u) - hash(value.second));
     }
 };
 
 struct hash_triple {
     size_t operator()(const Triple& value) const {
-        // return hash(value.first ^ value.second);  // what's best, when?
+        // return hash(str.first ^ str.second);  // what's best, when?
         auto [s, p, o] = value;
         return hash_pair{}(s) ^ hash_pair{}(p) ^ hash_pair{}(o);
     }
@@ -57,8 +58,16 @@ public:
     explicit Layer(Layer* parent, std::string name);
     Layer* add_layer(std::string new_name = "");
 
-    template <typename DataType> Address add_node(DataType item);
-    template <typename ...Args> auto wrap(Args... rest);
+    template <typename DataType>
+    Address add_node(DataType item) {
+        data.push_back(item);
+        return Address(data.size() - 1, level);
+    }
+
+    template <typename ...Args>
+    std::array<Address, sizeof...(Args)> wrap(Args... items) {
+        return {add_node(items)...};
+    };
 
     CType operator[](Address addr) const;
     std::optional<Address> find(CType item) const;

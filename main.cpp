@@ -2,7 +2,6 @@
 #include "tests/test_graphs.h"
 
 int main() {
-    test_all();
-    test_graphs::edges();
+    test_all(10);
     return 0;
 }
