@@ -28,6 +28,10 @@ std::optional<Address> Layer::find(CType item) const {
 }
 
 Layer::EdgeMap::iterator Layer::connect(Address s, Address p, Address o) {
+    auto [begin, end] = conn.equal_range(s);
+    for (auto it = begin; it != end; ++it)
+        if (it->second.first == p and it->second.second == o)
+            return it;
     return conn.insert({s, std::make_pair(p, o)});
 }
 
