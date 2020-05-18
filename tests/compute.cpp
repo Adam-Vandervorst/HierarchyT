@@ -1,8 +1,7 @@
-#include <chrono>
+#include <cassert>
 #include <experimental/random>
-#include "Benchmarks.h"
+#include "compute.h"
 
-using namespace std::chrono;
 using std::experimental::randint;
 
 
@@ -30,17 +29,15 @@ F btree_avg(Address left, Address right) {
     };
 }
 
-void benchmarks::hylo_performance() {
+
+void hylo_performance() {
     auto expr = new Layer();
     auto[l, r, seed] = expr->wrap("Left", "Right", 10000);
 
-    auto start = high_resolution_clock::now();
-    auto res = expr->hylo(seed, rand_btree(l, r), btree_avg(l, r));
-    auto stop = high_resolution_clock::now();
+    auto res_addr = expr->hylo(seed, rand_btree(l, r), btree_avg(l, r));
 
-    auto duration = duration_cast<nanoseconds>(stop - start);
-    std::cout << (*expr)[res] << ", " << duration.count() << std::endl;
+    double res = std::get<double>((*expr)[res_addr]);
+    assert(5.4 < res and res < 5.6);
     expr->free_tree();
     delete expr;
 }
-

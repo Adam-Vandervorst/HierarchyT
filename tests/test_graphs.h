@@ -1,6 +1,8 @@
-#include <iostream>
-#include "Layer.h"
-#include "Benchmarks.h"
+#ifndef HIERARCHYT_TEST_GRAPHS_H
+#define HIERARCHYT_TEST_GRAPHS_H
+
+#include "../src/Layer.h"
+
 
 namespace test_graphs {
     auto flat() {
@@ -34,28 +36,7 @@ namespace test_graphs {
         l3->connect(a0, p3, b0);
         return std::make_tuple(l0, l1, l2, l3);
     }
-
-    auto scene_rewrite() {
-        auto universe = new Layer();
-        auto scene = new Layer(universe, "Scene");
-        auto r1 = new Layer(scene, "Rewrite1");
-        auto r2 = new Layer(scene, "Rewrite2");
-        auto [box, pyr, bal] = universe->wrap("Box", "Pyramid", "Ball");
-        auto [l, r, t, b, o] = universe->wrap("Left", "Right", "Top", "Bottom", "Opposite");
-        universe->connect(l, o, r);
-        universe->connect(r, o, l);
-        universe->connect(t, o, b);
-        universe->connect(b, o, t);
-        scene->connect(box, l, pyr);
-        scene->connect(box, t, bal);
-        r1->connect(pyr, r, box);
-        r2->connect(bal, b, box);
-        return std::make_tuple(universe, scene, r1, r2);
-    }
 }
 
 
-int main() {
-    benchmarks::hylo_performance();
-    return 0;
-}
+#endif //HIERARCHYT_TEST_GRAPHS_H

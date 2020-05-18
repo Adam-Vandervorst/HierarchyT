@@ -1,0 +1,4 @@
+#ifndef HIERARCHYT_GROW_H
+#define HIERARCHYT_GROW_H
+
+#endif //HIERARCHYT_GROW_H
