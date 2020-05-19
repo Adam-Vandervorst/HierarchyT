@@ -1,5 +1,4 @@
 #include <vector>
-#include <map>
 #include <chrono>
 #include <iomanip>
 
@@ -47,24 +46,26 @@ using namespace std::chrono;
 
 const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::function<void ()>>>>> all_tests = {
         {"cross-implementation-benchmark", {
-            {"hylo-tree-avg", hylo_performance}
+            {"hylo-tree-avg", hylo_tree_avg}
         }},
         {"node-basic", {
-            {"add-single-node", add_node},
-            {"add-nodes-wrap", add_nodes},
-            {"get-node-data", retrieve_node_data},
-            {"find-node-with-data", find_node_data},
+            {"add-single-node", add_single_node},
+            {"add-nodes-wrap", add_nodes_wrap},
+            {"get-node-data", get_node_data},
+            {"find-node-with-data", find_node_with_data},
         }},
         {"edge-basic", {
-            {"add-single-edge", add_node},
-            {"add-edges", add_nodes},
-            {"get-node-targets", retrieve_targets},
+            {"add-single-edge", add_single_edge},
+            {"add-edges", add_edges},
+            {"get-node-targets", get_node_targets},
         }},
 };
 
-const std::vector<long> expected_test_times = {6679310,
-                                               56, 126, 98, 236,
-                                               52, 120, 689};
+const std::vector<long> expected_test_times = {
+    6503462,
+    52, 119, 186, 115,
+    241, 435, 688,
+};
 
 
 void test_all(unsigned int runs = 10) {
@@ -84,7 +85,7 @@ void test_all(unsigned int runs = 10) {
                 continue;
             }
             auto stop = high_resolution_clock::now();
-            long avg_time = (duration_cast<nanoseconds>(stop - start).count())/runs;
+            long avg_time = duration_cast<nanoseconds>(stop - start).count()/runs;
             double extra_time_percentage = (double)(avg_time - expected_test_times[test_i])/(.01*expected_test_times[test_i]);
 
             std::cout << format::succ << " " << name << " " << format::res(extra_time_percentage) << "%" << std::endl;
@@ -94,4 +95,19 @@ void test_all(unsigned int runs = 10) {
         total_s += group_s; total_f += group_f; total_t += group_t;
     }
     std::cout << "\t\t"  << format::summary("total", total_s, total_f, total_t);
+}
+
+
+void print_test_times(unsigned int runs = 100) {
+    std::cout << "{" << std::endl;
+    for (auto [_, tests] : all_tests) {
+        for (auto [_, test] : tests) {
+            auto start = high_resolution_clock::now();
+            for (unsigned int i = 0; i < runs; ++i) test();
+            auto stop = high_resolution_clock::now();
+            std::cout << duration_cast<nanoseconds>(stop - start).count()/runs << ", ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "};";
 }

@@ -1,14 +1,14 @@
 #include "../src/Layer.h"
 #include "grow.h"
 
-void add_node() {
+void add_single_node() {
     auto l = new Layer();
     auto a = l->add_node(1);
     if (a != Address(0, 0)) throw std::logic_error("wrong address in empty layer");
     l->free_tree(); delete l;
 }
 
-void add_nodes() {
+void add_nodes_wrap() {
     auto l = new Layer();
     auto a = l->add_node(1);
     auto b = l->add_node(2);
@@ -18,7 +18,7 @@ void add_nodes() {
     l->free_tree(); delete l;
 }
 
-void retrieve_node_data() {
+void get_node_data() {
     auto l = new Layer();
     auto [a, b] = l->wrap(1, "a");
     if (std::get<int>((*l)[a]) != 1) throw std::logic_error("node stores wrong data");
@@ -26,7 +26,7 @@ void retrieve_node_data() {
     l->free_tree(); delete l;
 }
 
-void find_node_data() {
+void find_node_with_data() {
     auto l = new Layer();
     auto [a, b] = l->wrap(1, "a");
     if (!l->find(CType(1)).has_value()) throw std::logic_error("node data not found");
@@ -34,13 +34,13 @@ void find_node_data() {
     l->free_tree(); delete l;
 }
 
-void add_edge() {
+void add_single_edge() {
     auto l = new Layer();
     auto [a, b, p] = l->wrap("a", "b", "p");
     auto e = l->connect(a, p, b);
     if (e->first != a) throw std::logic_error("wrong edge source");
     if (e->second.first != p) throw std::logic_error("wrong edge property");
-    if (e->second.second != p) throw std::logic_error("wrong edge target");
+    if (e->second.second != b) throw std::logic_error("wrong edge target");
     l->free_tree(); delete l;
 }
 
@@ -51,7 +51,7 @@ void add_edges() {
     auto e2 = l->connect(a, p2, b);
     auto e3 = l->connect(a, p1, c);
     auto e1_ = l->connect(a, p1, c);
-    if (e1 != e1_) throw std::logic_error("edge is not unique");
+    if (e3 != e1_) throw std::logic_error("edge is not unique");
     if (e1->second.first != e3->second.first) throw std::logic_error("edges do not share a property");
     l->free_tree(); delete l;
 }
@@ -66,7 +66,7 @@ bool contains(C c, Address n) {
     return std::find(c.begin(), c.end(), n) != c.end();
 }
 
-void retrieve_targets() {
+void get_node_targets() {
     auto l = new Layer();
     auto [a, b, c, p1, p2] = l->wrap("a", "b", "c", "p1", "p2");
     auto e1 = l->connect(a, p1, b);

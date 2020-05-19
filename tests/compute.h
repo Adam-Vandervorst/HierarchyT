@@ -9,7 +9,7 @@
 // NestedT     1000     1184        818       229
 //              100      133         84
 //               10       11          8
-void hylo_performance();
+void hylo_tree_avg();
 
 
 #endif //HIERARCHYT_COMPUTE_H

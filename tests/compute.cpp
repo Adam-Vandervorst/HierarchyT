@@ -30,7 +30,7 @@ F btree_avg(Address left, Address right) {
 }
 
 
-void hylo_performance() {
+void hylo_tree_avg() {
     auto expr = new Layer();
     auto[l, r, seed] = expr->wrap("Left", "Right", 10000);
 
