@@ -46,25 +46,40 @@ using namespace std::chrono;
 
 const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::function<void ()>>>>> all_tests = {
         {"cross-implementation-benchmark", {
-            {"hylo-tree-avg", hylo_tree_avg}
+            {"hylo-tree-avg", hylo_tree_avg},
+        }},
+        {"synthetic-benchmark", {
+            {"add-many-nodes", add_many_nodes},
+            {"add-many-edges", add_many_edges},
+            {"remove-source-heavy-node", remove_source_heavy_node},
+            {"remove-target-heavy-node", remove_target_heavy_node},
+            {"remove-property-heavy-node", remove_property_heavy_node},
+            {"remove-many-edges", remove_many_edges},
         }},
         {"node-basic", {
             {"add-single-node", add_single_node},
             {"add-nodes-wrap", add_nodes_wrap},
             {"get-node-data", get_node_data},
             {"find-node-with-data", find_node_with_data},
+            {"remove-single-node", remove_single_node},
+            {"remove-re-add-node", remove_re_add_node},
+            {"remove-nodes-with-data", remove_nodes_with_data},
         }},
         {"edge-basic", {
             {"add-single-edge", add_single_edge},
             {"add-edges", add_edges},
             {"get-node-targets", get_node_targets},
+            {"remove-single-edge-address", remove_single_edge_address},
+            {"remove-single-edge-iterator", remove_single_edge_iterator},
+            {"remove-re-add-edge", remove_re_add_edge},
         }},
 };
 
 const std::vector<long> expected_test_times = {
-    6503462,
-    52, 119, 186, 115,
-    241, 435, 688,
+    6251614,
+    147968, 43685001, 475100240, 5049499, 5575336, 96474429,
+    51, 109, 86, 136, 57, 209, 226,
+    207, 387, 611, 302, 372, 420,
 };
 
 

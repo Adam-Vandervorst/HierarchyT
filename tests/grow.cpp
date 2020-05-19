@@ -5,7 +5,7 @@ void add_single_node() {
     auto l = new Layer();
     auto a = l->add_node(1);
     if (a != Address(0, 0)) throw std::logic_error("wrong address in empty layer");
-    l->free_tree(); delete l;
+    delete l;
 }
 
 void add_nodes_wrap() {
@@ -15,7 +15,7 @@ void add_nodes_wrap() {
     auto [x, y] = l->wrap("x", "y");
     if (a == b) throw std::logic_error("nodes share address");
     if (b != Address(1, 0)) throw std::logic_error("second node has wrong address");
-    l->free_tree(); delete l;
+    delete l;
 }
 
 void get_node_data() {
@@ -23,7 +23,7 @@ void get_node_data() {
     auto [a, b] = l->wrap(1, "a");
     if (std::get<int>((*l)[a]) != 1) throw std::logic_error("node stores wrong data");
     if (std::get<std::string>((*l)[b]) != "a") throw std::logic_error("node stores wrong data");
-    l->free_tree(); delete l;
+    delete l;
 }
 
 void find_node_with_data() {
@@ -31,7 +31,14 @@ void find_node_with_data() {
     auto [a, b] = l->wrap(1, "a");
     if (!l->find(CType(1)).has_value()) throw std::logic_error("node data not found");
     if (l->find(CType("a")).value() != b) throw std::logic_error("wrong address found");
-    l->free_tree(); delete l;
+    delete l;
+}
+
+void add_many_nodes() {
+    auto l = new Layer();
+    //l->add_nodes(std::vector<int>(10000)); ~40% speedup
+    for (int i = 0; i < 10000; ++i) l->add_node(i);
+    delete l;
 }
 
 void add_single_edge() {
@@ -41,7 +48,7 @@ void add_single_edge() {
     if (e->first != a) throw std::logic_error("wrong edge source");
     if (e->second.first != p) throw std::logic_error("wrong edge property");
     if (e->second.second != b) throw std::logic_error("wrong edge target");
-    l->free_tree(); delete l;
+    delete l;
 }
 
 void add_edges() {
@@ -53,7 +60,7 @@ void add_edges() {
     auto e1_ = l->connect(a, p1, c);
     if (e3 != e1_) throw std::logic_error("edge is not unique");
     if (e1->second.first != e3->second.first) throw std::logic_error("edges do not share a property");
-    l->free_tree(); delete l;
+    delete l;
 }
 
 template<class C1>
@@ -75,6 +82,13 @@ void get_node_targets() {
     auto e1_ = l->connect(a, p1, c);
     if (!same_nodes(l->get_objects(a, p1), {b, c})) throw std::logic_error("wrong edge targets");
     if (!contains(l->get_objects(a, p1), b) or !contains(l->get_objects(a, p2), b)) throw std::logic_error("wrong edge target");
-    l->free_tree(); delete l;
+    delete l;
 }
 
+void add_many_edges() {
+    auto l = new Layer();
+    std::vector<int> xi(10), pi(100), yi(10);
+    auto xs = l->add_nodes(xi), ys = l->add_nodes(yi), ps = l->add_nodes(pi);
+    for (auto x : xs) for (auto p : ps) for (auto y : ys) l->connect(x, p, y);
+    delete l;
+}
