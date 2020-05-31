@@ -10,6 +10,7 @@
 //              100      133         84
 //               10       11          8
 void hylo_tree_avg();
-
+void random_graph();
+void factorial_tree_count();
 
 #endif //HIERARCHYT_COMPUTE_H

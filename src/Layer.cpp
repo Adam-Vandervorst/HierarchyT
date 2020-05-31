@@ -28,6 +28,15 @@ std::optional<Address> Layer::find(CType item) const {
     return Address(std::distance(data.begin(), it), level);
 }
 
+std::vector<Address> Layer::find_all(std::function<bool (Address)> cond) const {
+    std::vector<Address> cum; Address a;
+    if (parent) cum = parent->find_all(cond);
+    for (int i = 0; i < data.size(); ++i)
+        if (cond(a = Address(i, level)))
+            cum.push_back(a);
+    return cum;
+}
+
 Layer::EdgeMap::iterator Layer::connect(Address s, Address p, Address o) {
     auto [begin, end] = conn.equal_range(s);
     auto p_o = std::make_pair(p, o);
@@ -149,4 +158,3 @@ Layer* Layer::rewrite(Layer* l, Layer* r) {
     // ...
     return r;
 }
-

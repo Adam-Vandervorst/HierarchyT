@@ -96,6 +96,7 @@ public:
 
     CType operator[](Address addr) const;
     std::optional<Address> find(CType item) const;
+    std::vector<Address> find_all(std::function<bool (Address)> cond) const;
     EdgeMap::iterator connect(Address s, Address p, Address o);
     EdgeMap::iterator disconnect(EdgeMap::iterator it);
     EdgeMap::iterator disconnect(Address s, Address p, Address o);
@@ -109,7 +110,8 @@ public:
     void draw() const;
     void draw_hierarchy() const;
 
-    Address hylo(Address seed, F pre, F post);
+    static constexpr auto Fid = [](Layer* l_, Address n){return (*l_)[n];};
+    Address hylo(Address seed, F pre = Fid, F post  = Fid);
     Layer* rewrite(Layer* l, Layer* r);
 };
 

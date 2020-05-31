@@ -47,6 +47,8 @@ using namespace std::chrono;
 const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::function<void ()>>>>> all_tests = {
         {"cross-implementation-benchmark", {
             {"hylo-tree-avg", hylo_tree_avg},
+            {"random-graph", random_graph},
+            {"factorial-tree-count", factorial_tree_count},
         }},
         {"synthetic-benchmark", {
             {"add-many-nodes", add_many_nodes},
@@ -76,7 +78,7 @@ const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std:
 };
 
 const std::vector<long> expected_test_times = {
-    6251614,
+    6251614, 2579105, 1159848,
     147968, 43685001, 475100240, 5049499, 5575336, 96474429,
     51, 109, 86, 136, 57, 209, 226,
     207, 387, 611, 302, 372, 420,

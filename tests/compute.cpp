@@ -32,7 +32,7 @@ F btree_avg(Address left, Address right) {
 
 void hylo_tree_avg() {
     auto expr = new Layer();
-    auto[l, r, seed] = expr->wrap("Left", "Right", 10000);
+    auto [l, r, seed] = expr->wrap("Left", "Right", 10000);
 
     auto res_addr = expr->hylo(seed, rand_btree(l, r), btree_avg(l, r));
 
@@ -41,3 +41,43 @@ void hylo_tree_avg() {
     delete expr;
     if (not (4 < res and res < 7)) throw std::logic_error("expression average should be 5.5");
 }
+
+void random_graph() {
+    int nodes = 1000, properties = 100, edges = 10000;
+    auto l = new Layer();
+
+    auto ns = l->add_nodes(std::vector<int>(nodes));
+    auto ps = l->add_nodes(std::vector<int>(properties));
+    for (int i = edges; i > 0; --i)
+        l->connect(ns[randint(0, nodes)], ps[randint(0, properties)], ns[randint(0, nodes)]);
+
+    delete l;
+}
+
+F fact(int to_gen, Address prop) {
+    return [to_gen, prop](Layer* g, Address seed) {
+        auto i = std::get<int>((*g)[seed]);
+        if (i < to_gen)
+            for (int k = i; k >= 0; --k)
+                g->connect(seed, prop, g->add_node(i + 1));
+        return CType(i);
+    };
+}
+
+constexpr auto factorial(unsigned int n) {
+    if (n == 1 or n == 0) return 1u;
+    return n*factorial(n - 1);
+}
+
+void factorial_tree_count() {
+    int n = 7;
+    auto l = new Layer();
+
+    auto seed = l->add_node(1);
+    auto prop = l->add_node("");
+    l->hylo(seed, fact(n, prop));
+    if (factorial(n) != l->find_all([l, n](Address a){return (*l)[a] == CType(n);}).size())
+        throw std::logic_error("factorial tree incorrect");
+    delete l;
+}
+
