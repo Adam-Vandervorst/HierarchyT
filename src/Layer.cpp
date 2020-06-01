@@ -25,7 +25,9 @@ CType Layer::operator[](Address addr) const {
 std::optional<Address> Layer::find(CType item) const {
     auto it = std::find(data.begin(), data.end(), item);
     if (it == data.end()) return {};
-    return Address(std::distance(data.begin(), it), level);
+    auto a = Address(std::distance(data.begin(), it), level);
+    if (removed_nodes.contains(a)) return {};
+    return a;
 }
 
 std::vector<Address> Layer::find_all(std::function<bool (Address)> cond) const {
@@ -38,44 +40,47 @@ std::vector<Address> Layer::find_all(std::function<bool (Address)> cond) const {
 }
 
 Layer::EdgeMap::iterator Layer::connect(Address s, Address p, Address o) {
+    removed_edges.erase(Triple(s, p, o));
+    //auto nit = conn.emplace(s, std::make_pair(p, o));
     auto [begin, end] = conn.equal_range(s);
-    auto p_o = std::make_pair(p, o);
-    for (auto it = begin; it != end; ++it)
-        if (it->second == p_o) return it;
-    return conn.insert({s, p_o});
+    bool found_property = false;
+    for (auto it = begin; it != end; ++it) {
+        if (it->second.first == p) {
+            found_property = true;
+            if (it->second.second == o) return it;
+        } else if (found_property) break;
+    }
+    return conn.emplace(s, std::make_pair(p, o));
 }
 
 Layer::EdgeMap::iterator Layer::disconnect(Layer::EdgeMap::iterator it) {
+    removed_edges.emplace(it->first, it->second.first, it->second.second);
     return conn.erase(it);
 }
 
 Layer::EdgeMap::iterator Layer::disconnect(Address s, Address p, Address o) {
-    auto [begin, end] = conn.equal_range(s);
+    removed_edges.emplace(s, p ,o);
 
+    auto [begin, end] = conn.equal_range(s);
     for (auto it = begin; it != end; ++it)
         if (it->second.first == p and it->second.second == o)
             return conn.erase(it);
+
     return conn.end();
 }
 
 std::vector<Address> Layer::get_objects(Address s, Address p) {
-    auto [begin, end] = conn.equal_range(s);
-    std::vector<Address> objects;
-
-    for (auto it = begin; it != end; ++it)
-        if (it->second.first == p)
-            objects.push_back(it->second.second);
-
-   return objects;
-}
-
-std::vector<Address> Layer::lift(std::vector<Address> addresses, Layer* lifted) const {
-    /// For debugging purposes, only use in combination with <<=
-    for (auto& address : addresses){
-        address.first += lifted->data.size() - 1;
-        address.second = level;
+    if (removed_nodes.contains(s) or removed_nodes.contains(p)) return {};
+    std::vector<Address> objects; Address o;
+    const Layer* l = this;
+    while (l) {
+        auto [begin, end] = l->conn.equal_range(s);
+        for (auto it = begin; it != end; ++it)
+            if (it->second.first == p and not removed_nodes.contains(o = it->second.second))
+                objects.push_back(o);
+        l = l->parent;
     }
-    return addresses;
+   return objects;
 }
 
 Layer* Layer::operator<<=(Layer* other)  {

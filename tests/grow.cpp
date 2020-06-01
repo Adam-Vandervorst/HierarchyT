@@ -57,8 +57,8 @@ void add_edges() {
     auto e1 = l->connect(a, p1, b);
     auto e2 = l->connect(a, p2, b);
     auto e3 = l->connect(a, p1, c);
-    auto e1_ = l->connect(a, p1, c);
-    if (e3 != e1_) throw std::logic_error("edge is not unique");
+    auto e2_ = l->connect(a, p2, b);
+    if (e2 != e2_) throw std::logic_error("edge is not unique");
     if (e1->second.first != e3->second.first) throw std::logic_error("edges do not share a property");
     delete l;
 }

@@ -14,7 +14,7 @@ void remove_re_add_node() {
     auto a = l->add_node(1);
     l->remove_node(a);
     auto a_ = l->add_node(1);
-    if (a != a_) throw std::logic_error("re-add not equal");
+    if (a == a_) throw std::logic_error("re-add equal");
     delete l;
 }
 
@@ -23,12 +23,7 @@ void remove_nodes_with_data() {
     auto [a, b, c, d] = l->wrap(1, 1, "c", 1);
     while (auto n = l->find(1)) l->remove_node(n.value());
     if (l->find(1).has_value()) throw std::logic_error("nodes not removed");
-
-    try {
-        auto v = std::get<std::string>((*l)[c]);
-    } catch (std::bad_variant_access&) {
-        throw std::logic_error("removing nodes invalidates address");
-    }
+    if (not std::get_if<std::string>(&(*l)[c])) throw std::logic_error("removing nodes invalidates address");
     delete l;
 }
 

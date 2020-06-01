@@ -8,6 +8,8 @@
 #include <iostream>
 #include <functional>
 #include <variant>
+#include <unordered_set>
+#include <map>
 
 class Layer;
 using CType = std::variant<std::string, int, double>;
@@ -28,8 +30,8 @@ struct hash_pair {
         return static_cast<size_t>(x);
     }
     size_t operator()(const Address& value) const {
-        //return value.first ^ value.second;  // what's best, when?
-        return hash(value.first) ^ ((2u << 31u) - hash(value.second));
+        return value.first ^ value.second;  // what's best, when?
+        //return hash(value.first) ^ ((2u << 31u) - hash(value.second));
     }
 };
 
@@ -46,6 +48,8 @@ class Layer {
     using EdgeMap = std::unordered_multimap<Address, std::pair<Address, Address>, hash_pair>;
 
     std::vector<CType> data;
+    std::unordered_set<Address, hash_pair> removed_nodes;
+    std::unordered_set<Triple, hash_triple> removed_edges;
 
     Layer* parent = nullptr;
     std::vector<Layer*> children;
@@ -66,15 +70,7 @@ public:
     }
 
     void remove_node(Address n) {
-        // could be made lazy
-        auto [index, upstream] = n;
-        if (level < upstream) throw std::out_of_range("Parent has no knowledge of child data.");
-        if (upstream == level) {
-            std::erase_if(conn, [n](EdgeMap::value_type s_po){
-                return s_po.first == n or s_po.second.first == n or s_po.second.second == n;
-            });
-            data.erase(data.begin() + index);
-        } else throw std::runtime_error("Not implemented yet"); // store parent deleted nodes and transfer on merge?
+        removed_nodes.insert(n);
     }
 
     template <typename DataType>
@@ -101,7 +97,6 @@ public:
     EdgeMap::iterator disconnect(EdgeMap::iterator it);
     EdgeMap::iterator disconnect(Address s, Address p, Address o);
     std::vector<Address> get_objects(Address s, Address p);
-    std::vector<Address> lift(std::vector<Address> addresses, Layer* lifted) const;
 
     Layer* operator<<=(Layer* other);
 
