@@ -90,7 +90,7 @@ public:
         return {add_node(items)...};
     };
 
-    CType operator[](Address addr) const;
+    const CType& operator[](Address addr) const;
     std::optional<Address> find(CType item) const;
     std::vector<Address> find_all(std::function<bool (Address)> cond) const;
     EdgeMap::iterator connect(Address s, Address p, Address o);
