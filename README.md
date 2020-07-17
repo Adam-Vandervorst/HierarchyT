@@ -41,4 +41,4 @@ Open to pull-requests.
 - [ ] Allow for more heterogeneous computation, using node-centric operations
 - [ ] Add filter-map-reduce
 - [ ] Add parallel node-processing option
-- [ ] Branch `Map[Node, Map[Node, Set[Node]]` triple implementation from `Multimap[Node, (Node, Node)]`
+- [ ] Branch `Map[Node, Map[Node, Set[Node]]]` and `Vector[Multimap[Node, Node]]` triple implementations from the current `Multimap[Node, (Node, Node)]`
