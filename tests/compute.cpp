@@ -21,11 +21,12 @@ F rand_btree(Address left, Address right) {
 F btree_avg(Address left, Address right) {
     return [left, right](Layer* g, Address n) {
         auto data = (*g)[n];
-        if (data.index() != 1) {
+        if (std::holds_alternative<int>(data)) return CType((double)(std::get<int>(data)));
+        else {
             auto nl = g->get_objects(n, left)[0], nr = g->get_objects(n, right)[0];
             auto ld = (*g)[nl], rd = (*g)[nr];
             return CType((std::get<double>(ld) + std::get<double>(rd))/2.);
-        } else return CType((double) (std::get<int>(data)));
+        }
     };
 }
 
@@ -43,13 +44,14 @@ void hylo_tree_avg() {
 }
 
 void random_graph() {
-    int nodes = 1000, properties = 100, edges = 10000;
+    int nodes = 1000, properties = 100, edges = 20000;
     auto l = new Layer();
 
     auto ns = l->add_nodes(std::vector<int>(nodes));
     auto ps = l->add_nodes(std::vector<int>(properties));
-    for (int i = edges; i > 0; --i)
-        l->connect(ns[randint(0, nodes)], ps[randint(0, properties)], ns[randint(0, nodes)]);
+
+    while (l->conn.size() != edges)
+        l->connect(ns[randint(0, nodes - 1)], ps[randint(0, properties - 1)], ns[randint(0, nodes - 1)]);
 
     delete l;
 }
@@ -70,7 +72,7 @@ constexpr auto factorial(unsigned int n) {
 }
 
 void factorial_tree_count() {
-    int n = 7;
+    int n = 8;
     auto l = new Layer();
 
     auto seed = l->add_node(1);
@@ -80,4 +82,3 @@ void factorial_tree_count() {
         throw std::logic_error("factorial tree incorrect");
     delete l;
 }
-

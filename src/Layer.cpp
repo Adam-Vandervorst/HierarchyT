@@ -41,7 +41,7 @@ std::vector<Address> Layer::find_all(std::function<bool (Address)> cond) const {
 
 Layer::EdgeMap::iterator Layer::connect(Address s, Address p, Address o) {
     removed_edges.erase(Triple(s, p, o));
-    //auto nit = conn.emplace(s, std::make_pair(p, o));
+
     auto [begin, end] = conn.equal_range(s);
     bool found_property = false;
     for (auto it = begin; it != end; ++it) {
@@ -84,7 +84,7 @@ std::vector<Address> Layer::get_objects(Address s, Address p) {
 }
 
 Layer* Layer::operator<<=(Layer* other)  {
-    /// Addresses used in other are not valid in this, see `lift` above
+    /// Should apply edge and node removals
     unsigned int shift = this->data.size();
     data.reserve(data.size() + other->data.size());
     data.insert(data.end(), other->data.begin(), other->data.end());
@@ -99,8 +99,8 @@ Layer* Layer::operator<<=(Layer* other)  {
     return this;
 }
 
-int Layer::free_tree()  {
-    int total_freed = children.size();
+unsigned int Layer::free_tree()  {
+    unsigned int total_freed = children.size();
     for (Layer* child : children) {
         total_freed += child->free_tree();
         delete child;
@@ -117,9 +117,9 @@ void Layer::draw() const {
     const Layer* up = this;
     while ((up = up->parent)) path.push_back(up);
 
-    for (int i = path.size() - 1; i >= 0; --i) {
+    for (auto i = path.size() - 1; i >= 0; --i) {
         const Layer* graph = path[i];
-        unsigned int c_index = 256*((double)graph->level / (double)path.size());
+        auto c_index = 256*(unsigned int)((double)graph->level/(double)path.size());
         std::cout << "node [penwidth=2, color=\"" << cividis_colormap[c_index] << "\"];\n";
         std::cout << "edge [penwidth=1.5, color=\"" << cividis_colormap[c_index] << "\"];\n";
         for (int index = 0; index < graph->data.size(); ++index)

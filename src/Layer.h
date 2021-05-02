@@ -2,6 +2,7 @@
 #define HIERARCHY_LAYER_H
 #include <vector>
 #include <array>
+#include <numeric>
 #include <string>
 #include <tuple>
 #include <unordered_map>
@@ -29,17 +30,18 @@ struct hash_pair {
         x = (x >> 16u) ^ x;
         return static_cast<size_t>(x);
     }
+
     size_t operator()(const Address& value) const {
-        return value.first ^ value.second;  // what's best, when?
+        return value.first ^ ((2u << 31u) - value.second);
         //return hash(value.first) ^ ((2u << 31u) - hash(value.second));
     }
 };
 
 struct hash_triple {
     size_t operator()(const Triple& value) const {
-        // return hash(str.first ^ str.second);  // what's best, when?
+        unsigned int p1 = 143483, p2 = 60169;
         auto [s, p, o] = value;
-        return hash_pair{}(s) ^ hash_pair{}(p) ^ hash_pair{}(o);
+        return hash_pair{}(s) ^ p1*(hash_pair{}(p) ^ p2*hash_pair{}(o));
     }
 };
 
@@ -100,7 +102,7 @@ public:
 
     Layer* operator<<=(Layer* other);
 
-    int free_tree();
+    unsigned int free_tree();
 
     void draw() const;
     void draw_hierarchy() const;
