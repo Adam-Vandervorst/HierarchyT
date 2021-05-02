@@ -117,9 +117,10 @@ void Layer::draw() const {
     const Layer* up = this;
     while ((up = up->parent)) path.push_back(up);
 
-    for (auto i = path.size() - 1; i >= 0; --i) {
-        const Layer* graph = path[i];
-        auto c_index = 256*(unsigned int)((double)graph->level/(double)path.size());
+    std::cout << "digraph G {\n";
+    for (auto it = path.rbegin(); it != path.rend(); ++it) {
+        const Layer* graph = *it;
+        unsigned int c_index = 256*((double)graph->level/(double)path.size());
         std::cout << "node [penwidth=2, color=\"" << cividis_colormap[c_index] << "\"];\n";
         std::cout << "edge [penwidth=1.5, color=\"" << cividis_colormap[c_index] << "\"];\n";
         for (int index = 0; index < graph->data.size(); ++index)
@@ -127,22 +128,19 @@ void Layer::draw() const {
         for (auto [s, po] : graph->conn)
             std::cout << show_a(s) << " -> " << show_a(po.second) << " [label=\"" << (*this)[po.first] << "\"];\n";
     }
+    std::cout << "}\n";
 }
 
-void Layer::draw_hierarchy() const {
-    /*  draw hierarchy
-    std::cout << "digraph G {\n"
-                 "nodesep=.05;\n"
-                 "rankdir=LR;\n"
-                 "node [shape=record,width=.1,height=.1];\n";
-    r.draw_hierarchy();
-    std::cout << "}\n";
-     */
+void Layer::draw_hierarchy(bool top) const {
+    if (top) std::cout << "digraph G {\nnodesep=.05;\nrankdir=LR;\nnode [shape=record,width=.1,height=.1];\n";
+
     std::cout << show_p(this) << " [label = \"{" << this->name << "|" << data.size() << "|" << conn.size() << "}\"];\n";
     for (Layer* child : children) {
         std::cout << show_p(this) << " -> " << show_p(child) << ";\n";
-        child->draw_hierarchy();
+        child->draw_hierarchy(false);
     }
+
+    if (top) std::cout << "}\n";
 }
 
 Address Layer::hylo(Address seed, F pre, F post) {

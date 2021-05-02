@@ -77,10 +77,10 @@ public:
 
     template <typename DataType>
     std::vector<Address> add_nodes(std::vector<DataType> items) {
-        int s = items.size(), ds = data.size();
+        auto s = items.size(), ds = data.size();
         std::vector<Address> node_addresses(s);
         data.reserve(ds + s);
-        for (int i = 0; i < s; ++i) {
+        for (auto i = 0; i < s; ++i) {
             data.push_back(items[i]);
             node_addresses[i] = Address(ds + i, level);
         }
@@ -105,10 +105,10 @@ public:
     unsigned int free_tree();
 
     void draw() const;
-    void draw_hierarchy() const;
+    void draw_hierarchy(bool top = true) const;
 
     static constexpr auto Fid = [](Layer* l_, Address n){return (*l_)[n];};
-    Address hylo(Address seed, F pre = Fid, F post  = Fid);
+    Address hylo(Address seed, F pre = Fid, F post = Fid);
     Layer* rewrite(Layer* l, Layer* r);
 };
 

@@ -8,7 +8,7 @@ namespace test_graphs {
     auto scene_rewrite() {
         auto universe = new Layer();
         auto match = new Layer(universe, "RewriteMatch");
-        auto replace = new Layer(universe, "RewriteReplace");
+        auto replace = new Layer(match, "RewriteReplace");
         auto scene = new Layer(universe, "Scene");
         auto r1 = new Layer(scene, "Rewrite1");
         auto r2 = new Layer(scene, "Rewrite2");
@@ -37,8 +37,8 @@ namespace test_graphs {
         auto [m] = to_match->wrap("m");
         to_match->connect(m, a, m);
         auto replace = new Layer(to_match, "RewriteReplace");
-        auto [m1, m2] = replace->wrap("m1", "m2");
-        replace->connect(m1, b, m1);
+        // replace->disconnect(m, a, m);
+        replace->connect(m, b, m);
         return std::make_tuple(G, to_match, replace);
     }
 }

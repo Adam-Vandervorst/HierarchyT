@@ -45,19 +45,6 @@ struct format {
 using namespace std::chrono;
 
 const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std::function<void ()>>>>> all_tests = {
-        {"cross-implementation-benchmark", {
-            {"hylo-tree-avg", hylo_tree_avg},
-            {"random-graph", random_graph},
-            {"factorial-tree-count", factorial_tree_count},
-        }},
-        {"synthetic-benchmark", {
-            {"add-many-nodes", add_many_nodes},
-            {"add-many-edges", add_many_edges},
-            {"remove-source-heavy-node", remove_source_heavy_node},
-            {"remove-target-heavy-node", remove_target_heavy_node},
-            {"remove-property-heavy-node", remove_property_heavy_node},
-            {"remove-many-edges", remove_many_edges},
-        }},
         {"node-basic", {
             {"add-single-node", add_single_node},
             {"add-nodes-wrap", add_nodes_wrap},
@@ -75,13 +62,31 @@ const std::vector<std::pair<std::string, std::vector<std::pair<std::string, std:
             {"remove-single-edge-iterator", remove_single_edge_iterator},
             {"remove-re-add-edge", remove_re_add_edge},
         }},
+        {"layer-basic", {
+            {"add-stack-layers", add_stack_layers},
+            {"remove-stack-layers", remove_stack_layers},
+        }},
+        {"cross-implementation-benchmark", {
+            {"hylo-tree-avg", hylo_tree_avg},
+            {"random-graph", random_graph},
+            {"factorial-tree-count", factorial_tree_count},
+        }},
+        {"synthetic-benchmark", {
+            {"add-many-nodes", add_many_nodes},
+            {"add-many-edges", add_many_edges},
+            {"remove-source-heavy-node", remove_source_heavy_node},
+            {"remove-target-heavy-node", remove_target_heavy_node},
+            {"remove-property-heavy-node", remove_property_heavy_node},
+            {"remove-many-edges", remove_many_edges},
+        }},
 };
 
 const std::vector<long> expected_test_times = {
-    6251614, 2579105, 1159848,
-    147968, 43685001, 475100240, 5049499, 5575336, 96474429,
-    51, 109, 86, 136, 57, 209, 226,
-    207, 387, 611, 302, 372, 420,
+    97, 162, 104, 214, 175, 167, 270,
+    225, 439, 763, 415, 387, 542,
+    946, 1025,
+    6451387, 6239687, 8809388,
+    147746, 36873137, 352906065, 4727372, 5074571, 86119561,
 };
 
 
