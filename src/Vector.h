@@ -47,7 +47,7 @@ public:
     }
 
     Vector normalized() {
-        return this/norm();
+        return *this/norm();
     }
 
     auto bounds() {
@@ -59,13 +59,15 @@ public:
     auto clip(std::pair<T, T> bounds) {
         return map([bounds](T v){return std::max(bounds.first, std::min(bounds.second, v));});
     }
+};
 
-    void print() {
-        for (unsigned int i = 0; i < N; ++i) {
-            std::cout << this[i];
-            if (i != N - 1) std::cout << " ";
-        }
+template<int N_, class T_>
+std::ostream& operator << (std::ostream& os, const Vector<N_, T_> v) {
+    for (unsigned int i = 0; i < N_; ++i) {
+        os << v[i];
+        if (i != N_ - 1) os << " ";
     }
+    return os;
 };
 
 #define ops(O) \
